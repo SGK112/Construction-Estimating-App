@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Construction Estimator with Interactive Drawing</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="mobile-styles.css">
+</head>
+<body>
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <img src="images/logo.png" alt="Surprise Granite Logo" class="logo">
+            <h2>Loading Your Estimator</h2>
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <p id="loading-tip" class="loading-tip">Drag shapes to position them precisely</p>
+        </div>
+    </div>
+
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-container">
+                <img src="images/logo.png" alt="Surprise Granite Logo" class="logo">
+            </div>
+            <h1>Construction Estimator</h1>
+            <div class="header-actions">
+                <button id="help-button" class="help-button" aria-label="Help">?</button>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content" class="main-content">
+        <div class="app-container">
+            <div class="sidebar tools-sidebar">
+                <h2>Drawing Tools</h2>
+                <div class="tool-buttons">
+                    <button id="tool-rectangle" class="tool-button active" aria-label="Rectangle Tool">
+                        <span class="tool-icon">▭</span>
+                        <span class="tool-label">Rectangle</span>
+                    </button>
+                    <button id="tool-lshape" class="tool-button" aria-label="L-Shape Tool">
+                        <span class="tool-icon">⅃</span>
+                        <span class="tool-label">L-Shape</span>
+                    </button>
+                    <button id="tool-ushape" class="tool-button" aria-label="U-Shape Tool">
+                        <span class="tool-icon">⊃</span>
+                        <span class="tool-label">U-Shape</span>
+                    </button>
+                    <button id="tool-island" class="tool-button" aria-label="Island Tool">
+                        <span class="tool-icon">□</span>
+                        <span class="tool-label">Island</span>
+                    </button>
+                    <button id="tool-freehand" class="tool-button" aria-label="Freehand Tool">
+                        <span class="tool-icon">✎</span>
+                        <span class="tool-label">Freehand</span>
+                    </button>
+                    <button id="tool-select" class="tool-button" aria-label="Selection Tool">
+                        <span class="tool-icon">↖</span>
+                        <span class="tool-label">Select</span>
+                    </button>
+                </div>
+                <div class="tool-actions">
+                    <button id="undo-button" class="action-button" aria-label="Undo">Undo</button>
+                    <button id="redo-button" class="action-button" aria-label="Redo">Redo</button>
+                    <button id="clear-button" class="action-button" aria-label="Clear All">Clear All</button>
+                </div>
+            </div>
+
+            <div class="drawing-container">
+                <div class="canvas-controls">
+                    <div class="zoom-controls">
+                        <button id="zoom-out" class="zoom-button" aria-label="Zoom Out">−</button>
+                        <span id="zoom-level">100%</span>
+                        <button id="zoom-in" class="zoom-button" aria-label="Zoom In">+</button>
+                    </div>
+                    <div class="grid-controls">
+                        <label for="grid-toggle" class="grid-label">
+                            <input type="checkbox" id="grid-toggle" checked>
+                            Show Grid
+                        </label>
+                    </div>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="drawing-canvas" class="drawing-canvas"></canvas>
+                </div>
+                <div class="canvas-info">
+                    <div class="measurement-info">
+                        <span id="total-area">Total Area: 0 sq ft</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar properties-sidebar">
+                <h2>Properties</h2>
+                <div id="properties-panel" class="properties-panel">
+                    <div class="no-selection-message">
+                        <p>Select a shape to edit its properties</p>
+                    </div>
+                    <div class="shape-properties hidden">
+                        <div class="property-group">
+                            <h3>Dimensions</h3>
+                            <div class="property-row">
+                                <label for="prop-width">Width:</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="prop-width" min="1" step="0.1">
+                                    <span class="unit">in</span>
+                                </div>
+                            </div>
+                            <div class="property-row">
+                                <label for="prop-depth">Depth:</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="prop-depth" min="1" step="0.1">
+                                    <span class="unit">in</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="property-group">
+                            <h3>Material</h3>
+                            <div class="property-row">
+                                <label for="prop-material">Material:</label>
+                                <select id="prop-material">
+                                    <option value="loading">Loading materials...</option>
+                                </select>
+                            </div>
+                            <div class="property-row">
+                                <label for="prop-thickness">Thickness:</label>
+                                <select id="prop-thickness">
+                                    <option value="2cm">2cm</option>
+                                    <option value="3cm">3cm</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="property-group">
+                            <h3>Edge</h3>
+                            <div class="property-row">
+                                <label for="prop-edge">Edge Type:</label>
+                                <select id="prop-edge">
+                                    <option value="straight">Straight</option>
+                                    <option value="beveled">Beveled</option>
+                                    <option value="bullnose">Bullnose</option>
+                                    <option value="ogee">Ogee</option>
+                                    <option value="waterfall">Waterfall</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="property-group waterfall-options hidden">
+                            <h3>Waterfall Options</h3>
+                            <div class="property-row">
+                                <label>Waterfall Sides:</label>
+                                <div class="checkbox-group">
+                                    <label>
+                                        <input type="checkbox" name="waterfall-side" value="left"> Left
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" name="waterfall-side" value="right"> Right
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" name="waterfall-side" value="back"> Back
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="property-row">
+                                <label for="prop-waterfall-height">Height:</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="prop-waterfall-height" min="1" value="36" step="0.1">
+                                    <span class="unit">in</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="additional-options">
+                    <h3>Additional Options</h3>
+                    <div class="option-row">
+                        <label>
+                            <input type="checkbox" id="option-backsplash">
+                            Include Backsplash
+                        </label>
+                    </div>
+                    <div class="backsplash-options hidden">
+                        <div class="option-row">
+                            <label for="backsplash-height">Height:</label>
+                            <div class="input-with-unit">
+                                <input type="number" id="backsplash-height" min="1" value="4" step="0.1">
+                                <span class="unit">in</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="option-row">
+                        <label>
+                            <input type="checkbox" id="option-demolition">
+                            Include Demolition
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="estimate-section">
+            <h2>Estimate Summary</h2>
+            <div class="estimate-container">
+                <div class="estimate-details">
+                    <div class="estimate-row">
+                        <span class="estimate-label">Material Cost:</span>
+                        <span id="material-cost" class="estimate-value">$0.00</span>
+                    </div>
+                    <div class="estimate-row">
+                        <span class="estimate-label">Edge Cost:</span>
+                        <span id="edge-cost" class="estimate-value">$0.00</span>
+                    </div>
+                    <div class="estimate-row">
+                        <span class="estimate-label">Labor Cost:</span>
+                        <span id="labor-cost" class="estimate-value">$0.00</span>
+                    </div>
+                    <div class="estimate-row">
+                        <span class="estimate-label">Additional Options:</span>
+                        <span id="additional-cost" class="estimate-value">$0.00</span>
+                    </div>
+                    <div class="estimate-row total-row">
+                        <span class="estimate-label">Total Estimate:</span>
+                        <span id="total-cost" class="estimate-value">$0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-section">
+            <h2>Get Your Quote</h2>
+            <form id="contact-form" class="contact-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="contact-name">Name:</label>
+                        <input type="text" id="contact-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email">Email:</label>
+                        <input type="email" id="contact-email" name="email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="contact-phone">Phone:</label>
+                        <input type="tel" id="contact-phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-zipcode">Zip Code:</label>
+                        <input type="text" id="contact-zipcode" name="zipcode" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="contact-message">Additional Information:</label>
+                        <textarea id="contact-message" name="message" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" id="submit-quote" class="primary-button">Submit Quote Request</button>
+                    <button type="button" id="save-design" class="secondary-button">Save Design</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="company-info">
+                <p>Surprise Granite</p>
+                <p>11560 N Dysart rd. #112, Surprise Arizona, 85379</p>
+                <p>(602) 833-3189 | info@surprisegranite.com</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="tutorial-overlay" class="tutorial-overlay hidden">
+        <div class="tutorial-content">
+            <button id="close-tutorial" class="close-button" aria-label="Close Tutorial">×</button>
+            <div id="tutorial-step-content" class="tutorial-step-content">
+                <!-- Tutorial content will be inserted here -->
+            </div>
+            <div class="tutorial-navigation">
+                <button id="prev-tutorial" class="tutorial-nav-button">Previous</button>
+                <button id="next-tutorial" class="tutorial-nav-button primary-button">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

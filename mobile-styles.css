@@ -1,0 +1,233 @@
+/* Mobile-specific styles for Construction Estimator App */
+
+/* Base Mobile Adjustments */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .app-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .tool-buttons {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .canvas-wrapper {
+    min-height: 300px;
+  }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+  .tool-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .canvas-wrapper {
+    min-height: 250px;
+  }
+  
+  .estimate-row {
+    font-size: 0.9rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .primary-button, .secondary-button {
+    width: 100%;
+  }
+}
+
+/* Touch Optimizations */
+.touch-enabled .tool-button,
+.touch-enabled .action-button,
+.touch-enabled .zoom-button,
+.touch-enabled input[type="checkbox"] + label,
+.touch-enabled .primary-button,
+.touch-enabled .secondary-button {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.touch-enabled input[type="checkbox"] {
+  transform: scale(1.2);
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--white);
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.bottom-nav-inner {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 56px;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  text-decoration: none;
+  color: var(--dark-gray);
+  font-size: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.bottom-nav-item.active {
+  color: var(--accent-color);
+}
+
+.bottom-nav-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .bottom-nav {
+    display: block;
+  }
+  
+  body {
+    padding-bottom: 56px;
+  }
+}
+
+/* Pull to Refresh */
+.pull-to-refresh {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-100%);
+  transition: transform 0.2s ease-out;
+  z-index: 100;
+}
+
+.pull-to-refresh-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top-color: var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Gesture Indicators */
+.swipe-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.swipe-indicator.visible {
+  opacity: 1;
+}
+
+/* Orientation Specific */
+@media (orientation: landscape) and (max-width: 768px) {
+  .app-container {
+    flex-direction: row;
+  }
+  
+  .sidebar {
+    width: 250px;
+  }
+  
+  .bottom-nav {
+    display: none;
+  }
+  
+  body {
+    padding-bottom: 0;
+  }
+}
+
+/* Accessibility Enhancements */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  padding: 8px;
+  z-index: 9999;
+  background-color: var(--white);
+  transition: top 0.3s ease-in-out;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* Focus Styles */
+:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --primary-color: #000066;
+    --accent-color: #cc0000;
+    --text-color: #000000;
+    --light-gray: #ffffff;
+    --medium-gray: #cccccc;
+    --dark-gray: #666666;
+  }
+  
+  .tool-button.active {
+    outline: 2px solid #000000;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
